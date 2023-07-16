@@ -6,45 +6,57 @@ const winnerScore = 5
 
 const plays = ["rock", "paper", "scissors"]
 
+let computerScore = 0;
+let playerScore = 0;
+
 // Random computer play
 function getComputerChoice() {
- return plays[Math.floor(Math.random() * 3)]
+ return plays[Math.floor(Math.random() * 3)];
 }
 
+// round event listner
+const buttons = document.querySelectorAll('button')
+buttons.forEach((button) => {
+ button.addEventListener('click', () => {
+  round(button.textContent);
+ })
+})
 
-// Start round
-function round(playerSelection, computerSelection) {
- const playerSelectionLower = playerSelection.toLowerCase()
+// Reset Score
+function resetGame() {
+ computerScore = 0;
+ playerScore = 0;
+ document.querySelector('.computer-score').textContent = 0;
+ document.querySelector('.player-score').textContent = 0;
+}
+
+function round(playerSelection) {
+ const playerSelectionLower = playerSelection.toLowerCase();
+ const computerSelection = getComputerChoice();
+ const playMessage = document.querySelector('.play-text-container')
  if(playerSelectionLower === computerSelection) {
-  return `Draw! ${playerSelectionLower} ties with ${computerSelection}`
+  playMessage.textContent = `Draw! ${playerSelectionLower} ties with ${computerSelection}`;
  } else {
   if(playerSelectionLower === "rock" && computerSelection === "scissors" || playerSelectionLower === "scissors" && computerSelection === "paper" || 
   playerSelectionLower === "paper" && computerSelection === "rock") {
-   return `You won! ${playerSelectionLower} beats ${computerSelection}`
+   playMessage.textContent = `You won! ${playerSelectionLower} beats ${computerSelection}`;
+   playerScore++;
+   document.querySelector('.player-score').textContent = parseInt(document.querySelector('.player-score').textContent) + 1;
   } else {
-   return `You lost! ${playerSelectionLower} is beaten by ${computerSelection}`
+   playMessage.textContent = `You lost! ${playerSelectionLower} is beaten by ${computerSelection}`;
+   computerScore++;
+   document.querySelector('.computer-score').textContent = parseInt(document.querySelector('.computer-score').textContent) + 1;
   }
  }
+ finishGame();
 }
 
-// Start game
-function game() {
- let playerScore = 0, computerScore = 0
-
- while(playerScore != winnerScore && computerScore != winnerScore) {
-  let input = prompt("rock, paper, or scissors?")
-  let roundResult = round(input, getComputerChoice())
-  if(roundResult.includes("won")) {
-   playerScore++
-  } else if (roundResult.includes("lost")) {
-   computerScore++
-  }
-  console.log(`Computer Score: ${computerScore} : Player Score: ${playerScore}`)
+// Finish and restart game
+function finishGame() {
+ if(playerScore == 5 || computerScore == 5) {
+  let result = playerScore > computerScore  ? "You won the game!" : "You lost to the computer!";
+  const playMessage = document.querySelector('.play-text-container');
+  playMessage.textContent = result;
+  resetGame();
  }
-
- let result = playerScore > computerScore  ? "You won the game!" : "You lost to the computer!"
-
- return result
 }
-
-console.log(game());
